@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -10,12 +10,19 @@ function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/admin";
-  const { login } = useAuth();
+  const { user, role, isAuthenticated, isLoading, login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // If already authenticated as Super Admin, immediately route to the dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && role === "admin") {
+      window.location.href = redirectPath;
+    }
+  }, [isLoading, isAuthenticated, role, redirectPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,14 +38,14 @@ function AdminLoginForm() {
     try {
       const ok = await login("admin", email.trim().toLowerCase(), password);
       if (ok) {
-        router.push(redirectPath);
-        router.refresh();
+        // Full page reload navigation to ensure new cookies are passed cleanly and Next.js router cache is reset
+        window.location.href = redirectPath;
       } else {
         setError("Invalid Super Admin credentials. Access denied.");
+        setLoading(false);
       }
     } catch (err: any) {
       setError(err?.message || "An unexpected error occurred during admin authentication");
-    } finally {
       setLoading(false);
     }
   };

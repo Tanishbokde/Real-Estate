@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -8,7 +8,7 @@ import { User, Lock, Mail, ArrowRight, Heart, Sparkles, Home, Phone, AlertCircle
 
 export default function CustomerLoginPage() {
   const router = useRouter();
-  const { login, registerCustomer } = useAuth();
+  const { user, role, isAuthenticated, isLoading, login, registerCustomer } = useAuth();
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
@@ -17,6 +17,13 @@ export default function CustomerLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // If already authenticated as Customer, route directly to customer dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && role === "customer") {
+      window.location.href = "/customer";
+    }
+  }, [isLoading, isAuthenticated, role]);
 
   const handleToggleMode = (signUp: boolean) => {
     setIsSignUp(signUp);
@@ -41,21 +48,22 @@ export default function CustomerLoginPage() {
           password
         });
         if (res.success) {
-          router.push("/customer");
+          window.location.href = "/customer";
         } else {
           setError(res.error || "Failed to create customer account. Please try again.");
+          setLoading(false);
         }
       } else {
         const ok = await login("customer", email.trim().toLowerCase(), password);
         if (ok) {
-          router.push("/customer");
+          window.location.href = "/customer";
         } else {
           setError("Invalid customer credentials. Please check your email and password.");
+          setLoading(false);
         }
       }
     } catch (err: any) {
       setError(err?.message || "An unexpected error occurred. Please try again.");
-    } finally {
       setLoading(false);
     }
   };

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { nagpurDb } from "@/lib/data/nagpur-mock-db";
 import { encodeSession, SESSION_COOKIE_NAME, SessionUser } from "@/lib/auth/session";
 
@@ -32,21 +33,29 @@ export async function POST(request: Request) {
     const sessionUser: SessionUser = regResult.user;
     const token = encodeSession(sessionUser);
 
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax" as const,
+      maxAge: 7 * 24 * 60 * 60,
+      path: "/"
+    };
+
+    try {
+      const cookieStore = await cookies();
+      cookieStore.set(SESSION_COOKIE_NAME, token, cookieOptions);
+    } catch (_) {}
+
     const response = NextResponse.json({
       success: true,
       message: "Customer account created successfully",
       user: sessionUser
     });
 
-    // Set secure HTTP-only cookie
     response.cookies.set({
       name: SESSION_COOKIE_NAME,
       value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60,
-      path: "/"
+      ...cookieOptions
     });
 
     return response;

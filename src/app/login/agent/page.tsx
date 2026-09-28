@@ -10,7 +10,7 @@ import { Lock, Mail, Building2, User, CheckCircle2, AlertCircle } from "lucide-r
 
 export default function AgentLoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { user, role, isAuthenticated, isLoading, login } = useAuth();
   const [agents, setAgents] = useState<AgentBroker[]>([]);
 
   // Requirement 1: Fields must NOT already contain typed text and must be empty by default
@@ -18,6 +18,13 @@ export default function AgentLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // If already authenticated as Agent, route directly to agent dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && role === "agent") {
+      window.location.href = "/agent";
+    }
+  }, [isLoading, isAuthenticated, role]);
 
   useEffect(() => {
     const list = nagpurDb.getAgents();
@@ -38,13 +45,13 @@ export default function AgentLoginPage() {
     try {
       const ok = await login("agent", emailInput.trim().toLowerCase(), password);
       if (ok) {
-        router.push("/agent");
+        window.location.href = "/agent";
       } else {
         setError("Invalid broker email or password. Please verify your credentials.");
+        setLoading(false);
       }
     } catch (err: any) {
       setError(err?.message || "An unexpected login error occurred");
-    } finally {
       setLoading(false);
     }
   };
@@ -55,11 +62,13 @@ export default function AgentLoginPage() {
     try {
       const ok = await login("agent", email, "agent123");
       if (ok) {
-        router.push("/agent");
+        window.location.href = "/agent";
       } else {
         setError("Quick login failed for " + email);
+        setLoading(false);
       }
-    } finally {
+    } catch (err: any) {
+      setError(err?.message || "An unexpected login error occurred");
       setLoading(false);
     }
   };

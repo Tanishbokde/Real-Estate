@@ -56,6 +56,17 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // If already authenticated and visiting the corresponding login page, redirect directly to dashboard
+  if (pathname === "/login/admin" && session?.role === "admin") {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  }
+  if (pathname === "/login/agent" && session?.role === "agent") {
+    return NextResponse.redirect(new URL("/agent", request.url));
+  }
+  if (pathname === "/login/customer" && session?.role === "customer") {
+    return NextResponse.redirect(new URL("/customer", request.url));
+  }
+
   const response = NextResponse.next();
   // Prevent browser caching on authenticated dashboards
   if (
@@ -82,6 +93,9 @@ export const config = {
     "/agent/:path*",
     "/customer",
     "/customer/:path*",
+    "/login/admin",
+    "/login/agent",
+    "/login/customer",
     "/api/supabase/config"
   ]
 };

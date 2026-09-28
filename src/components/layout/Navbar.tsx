@@ -75,6 +75,7 @@ export function Navbar() {
                 </span>
                 <Link
                   href={role === "admin" ? "/admin" : role === "agent" ? "/agent" : "/customer"}
+                  prefetch={false}
                   className="text-orange-400 hover:text-orange-300 underline font-medium ml-1 hidden sm:inline"
                 >
                   (Go to Dashboard)
@@ -183,6 +184,7 @@ export function Navbar() {
               {/* Customer Dashboard Link */}
               <Link
                 href="/customer"
+                prefetch={false}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${
                   pathname === "/customer" ? "text-orange-600 bg-orange-50 font-semibold" : "text-slate-700 hover:bg-slate-100"
                 }`}
@@ -194,6 +196,7 @@ export function Navbar() {
               {/* Agent Dashboard Link */}
               <Link
                 href="/agent"
+                prefetch={false}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${
                   pathname === "/agent" ? "text-emerald-700 bg-emerald-50 font-semibold" : "text-slate-700 hover:bg-slate-100"
                 }`}
@@ -207,6 +210,7 @@ export function Navbar() {
                 <>
                   <Link
                     href="/admin"
+                    prefetch={false}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${
                       pathname === "/admin"
                         ? "bg-slate-900 text-white font-semibold"
@@ -220,6 +224,7 @@ export function Navbar() {
                   {/* Database Link with Icon */}
                   <Link
                     href="/admin?tab=database"
+                    prefetch={false}
                     className="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200"
                     title="Database: View all properties, inquiries, visits & table data"
                   >
@@ -376,6 +381,7 @@ export function Navbar() {
             </Link>
             <Link
               href="/customer"
+              prefetch={false}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-100"
             >
@@ -383,6 +389,7 @@ export function Navbar() {
             </Link>
             <Link
               href="/agent"
+              prefetch={false}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-100"
             >
@@ -392,6 +399,7 @@ export function Navbar() {
               <>
                 <Link
                   href="/admin"
+                  prefetch={false}
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-slate-900 text-white font-medium"
                 >
@@ -399,6 +407,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/admin?tab=database"
+                  prefetch={false}
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-semibold border border-emerald-200"
                 >
